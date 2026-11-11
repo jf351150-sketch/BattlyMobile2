@@ -42,10 +42,15 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         addPreferencesFromResource(R.xml.pref_video);
         ListPreference nexusProfile = requirePreference(
                 NexusPerformanceProfiles.PREF_PROFILE, ListPreference.class);
+        String activeNexusProfile = nexusProfile.getValue();
+        nexusProfile.setSummary("Detectado: " + NexusPerformanceProfiles.describe(
+                requireContext(), activeNexusProfile));
         nexusProfile.setOnPreferenceChangeListener((preference, newValue) -> {
             NexusPerformanceProfiles.apply(requireContext(), String.valueOf(newValue));
+            nexusProfile.setSummary("Detectado: " + NexusPerformanceProfiles.describe(
+                    requireContext(), String.valueOf(newValue)));
             Toast.makeText(requireContext(),
-                    "Perfil NEXUS: " + NexusPerformanceProfiles.describe(
+                    "Perfil NEXUS aplicado: " + NexusPerformanceProfiles.describe(
                             requireContext(), String.valueOf(newValue)),
                     Toast.LENGTH_LONG).show();
             return true;
