@@ -6,7 +6,7 @@
     <string name="battly_device_privacy_title">Device security and privacy</string>
     <string name="battly_device_privacy_message">To prevent ban evasion, Battly links a protected identifier of this device to the Battly accounts used on it. We do not read your IMEI or serial number, and the original Android identifier is not sent or stored. If an associated account is banned, access from this device may also be blocked, including for other accounts on a shared device. This association is kept until removed by Battly support. Contact support to request a review or deletion. Tap OK to accept, or Cancel to leave without registering the device.</string>
     <!-- App name part -->
-    <string name="app_name">Battly Launcher</string>
+    <string name="app_name">NEXUS Launcher</string>
     <string name="launcher_mobile_badge">Mobile 2.2.9</string>
     <string name="launcher_mobile_badge_dynamic">Mobile %1$s</string>
     <string name="credits_version_dynamic">Version %1$s</string>
