@@ -48,6 +48,8 @@ public final class NexusSpotifyAuth {
             .callTimeout(30, TimeUnit.SECONDS).build();
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
+    private static final java.util.concurrent.ExecutorService API_EXECUTOR =
+            java.util.concurrent.Executors.newSingleThreadExecutor();
 
     private NexusSpotifyAuth() {}
 
@@ -268,7 +270,7 @@ public final class NexusSpotifyAuth {
 
     private static final class PojavApplicationHolder {
         static void execute(Runnable task) {
-            java.util.concurrent.Executors.newSingleThreadExecutor().execute(task);
+            API_EXECUTOR.execute(task);
         }
     }
 
