@@ -11,8 +11,7 @@
             android:defaultValue="auto"
             android:entries="@array/nexus_performance_profile_entries"
             android:entryValues="@array/nexus_performance_profile_values"
-            android:icon="@drawable/ic_setting_engine"
-            app2:useSimpleSummaryProvider="true" />
+            android:icon="@drawable/ic_setting_engine" />
 
         <net.kdt.pojavlaunch.prefs.NoDialogListPreference
             android:key="renderer"
