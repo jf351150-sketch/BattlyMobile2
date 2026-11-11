@@ -68,7 +68,7 @@ public final class NexusSpotifyAuth {
                     .appendQueryParameter("code_challenge_method", "S256")
                     .appendQueryParameter("code_challenge", challenge)
                     .appendQueryParameter("state", state)
-                    .appendQueryParameter("scope", "user-read-private user-read-email")
+                    .appendQueryParameter("scope", "user-read-private user-read-email user-read-playback-state user-modify-playback-state")
                     .build();
             activity.startActivity(new Intent(Intent.ACTION_VIEW, authUri));
         } catch (Exception e) {
@@ -146,6 +146,130 @@ public final class NexusSpotifyAuth {
                 }
             }
         });
+    }
+
+
+    public interface PlaybackCallback {
+        void onResult(String message);
+    }
+
+    public static boolean isConnected(Context context) {
+        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).contains(KEY_TOKEN);
+    }
+
+    public static void playPause(Context context, PlaybackCallback callback) {
+        playbackRequest(context, "GET", "/me/player", null, new PlaybackCallback() {
+            @Override public void onResult(String state) {
+                if (state.startsWith("ERROR:")) { callback.onResult(state); return; }
+                String method = state.startsWith("PLAYING:") ? "PUT" : "PUT";
+                String endpoint = state.startsWith("PLAYING:") ? "/me/player/pause" : "/me/player/play";
+                playbackRequest(context, method, endpoint, "{}", callback);
+            }
+        });
+    }
+
+    public static void next(Context context, PlaybackCallback callback) {
+        playbackRequest(context, "POST", "/me/player/next", "", callback);
+    }
+
+    public static void previous(Context context, PlaybackCallback callback) {
+        playbackRequest(context, "POST", "/me/player/previous", "", callback);
+    }
+
+    public static void refreshPlayback(Context context, PlaybackCallback callback) {
+        playbackRequest(context, "GET", "/me/player", null, callback);
+    }
+
+    private static void playbackRequest(Context context, String method, String path,
+                                        String payload, PlaybackCallback callback) {
+        PojavApplicationHolder.execute(() -> {
+            try {
+                String accessToken = getValidAccessToken(context);
+                if (accessToken == null) {
+                    callback.onResult("ERROR:Conecta Spotify primero.");
+                    return;
+                }
+                Request.Builder builder = new Request.Builder()
+                        .url("https://api.spotify.com/v1" + path)
+                        .header("Authorization", "Bearer " + accessToken);
+                if ("GET".equals(method)) builder.get();
+                else if ("PUT".equals(method)) builder.put(
+                        okhttp3.RequestBody.create(payload == null ? "" : payload,
+                                okhttp3.MediaType.parse("application/json; charset=utf-8")));
+                else builder.post(okhttp3.RequestBody.create(payload == null ? "" : payload,
+                        okhttp3.MediaType.parse("application/json; charset=utf-8")));
+                try (Response response = HTTP.newCall(builder.build()).execute()) {
+                    if (response.code() == 204) {
+                        callback.onResult("OK:Comando enviado a Spotify.");
+                    } else if (response.code() == 200 && response.body() != null) {
+                        JSONObject json = new JSONObject(response.body().string());
+                        JSONObject item = json.optJSONObject("item");
+                        String title = item == null ? "Spotify" : item.optString("name", "Spotify");
+                        String artist = "";
+                        if (item != null && item.optJSONArray("artists") != null
+                                && item.optJSONArray("artists").length() > 0) {
+                            artist = item.optJSONArray("artists").optJSONObject(0).optString("name", "");
+                        }
+                        callback.onResult((json.optBoolean("is_playing") ? "PLAYING:" : "PAUSED:")
+                                + title + (artist.isEmpty() ? "" : " — " + artist));
+                    } else if (response.code() == 202) {
+                        callback.onResult("OK:Comando enviado a Spotify.");
+                    } else if (response.code() == 401) {
+                        callback.onResult("ERROR:Spotify requiere volver a conectar la cuenta.");
+                    } else if (response.code() == 403) {
+                        callback.onResult("ERROR:Esta función requiere Spotify Premium.");
+                    } else if (response.code() == 404) {
+                        callback.onResult("ERROR:Abre Spotify y comienza a reproducir en un dispositivo.");
+                    } else {
+                        callback.onResult("ERROR:Spotify respondió HTTP " + response.code() + ".");
+                    }
+                }
+            } catch (Exception e) {
+                callback.onResult("ERROR:No se pudo contactar con Spotify.");
+            }
+        });
+    }
+
+    private static String getValidAccessToken(Context context) throws Exception {
+        android.content.SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        String encrypted = prefs.getString(KEY_TOKEN, null);
+        if (encrypted == null) return null;
+        JSONObject token = new JSONObject(decrypt(encrypted));
+        if (token.optLong("expires_at", 0) > System.currentTimeMillis() + 60000)
+            return token.optString("access_token", null);
+        String refresh = token.optString("refresh_token", "");
+        if (refresh.isEmpty()) return null;
+        FormBody body = new FormBody.Builder().add("client_id", CLIENT_ID)
+                .add("grant_type", "refresh_token").add("refresh_token", refresh).build();
+        Request request = new Request.Builder().url("https://accounts.spotify.com/api/token")
+                .post(body).build();
+        try (Response response = HTTP.newCall(request).execute()) {
+            if (!response.isSuccessful() || response.body() == null) return null;
+            JSONObject renewed = new JSONObject(response.body().string());
+            token.put("access_token", renewed.getString("access_token"));
+            token.put("expires_at", System.currentTimeMillis()
+                    + renewed.optLong("expires_in", 3600) * 1000L);
+            if (renewed.has("refresh_token")) token.put("refresh_token", renewed.getString("refresh_token"));
+            prefs.edit().putString(KEY_TOKEN, encrypt(token.toString())).apply();
+            return token.getString("access_token");
+        }
+    }
+
+    private static String decrypt(String encoded) throws Exception {
+        byte[] combined = Base64.decode(encoded, Base64.NO_WRAP);
+        byte[] iv = new byte[12];
+        byte[] ciphertext = new byte[combined.length - iv.length];
+        System.arraycopy(combined, 0, iv, 0, iv.length);
+        System.arraycopy(combined, iv.length, ciphertext, 0, ciphertext.length);
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        cipher.init(Cipher.DECRYPT_MODE, getOrCreateKey(), new GCMParameterSpec(128, iv));
+        return new String(cipher.doFinal(ciphertext), StandardCharsets.UTF_8);
+    }
+
+    private static final class PojavApplicationHolder {
+        static void execute(Runnable task) {
+            java.util.concurrent.Executors.newSingleThreadExecutor().execute(task);
+        }
     }
 
     private static String encrypt(String plainText) throws Exception {
