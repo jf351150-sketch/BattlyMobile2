@@ -75,7 +75,7 @@ public final class NexusSpotifyAuth {
                     .build();
             activity.startActivity(new Intent(Intent.ACTION_VIEW, authUri));
         } catch (Exception e) {
-            Toast.makeText(activity, "No se pudo iniciar Spotify: " + e.getMessage(),
+            Toast.makeText(activity, activity.getString(R.string.nexus_spotify_start_error, e.getMessage()),
                     Toast.LENGTH_LONG).show();
         }
     }
