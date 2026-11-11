@@ -38,3 +38,19 @@ The Spotify Android app must be installed and the user must authorize NEXUS for 
 - Spotify Android SDK artifacts added from Spotify's official distribution and their license/notice retained.
 
 Never place private credentials, user tokens, signing keys, or refresh tokens in Git.
+
+## Android implementation status (2026-11-10)
+
+The Android branch now contains an initial Web API integration:
+
+- NexusSpotifyAuth.java: Authorization Code with PKCE, random verifier/challenge and state validation, token exchange, refresh-token renewal, and AES-GCM token encryption backed by Android Keystore.
+- LauncherActivity.java and AndroidManifest.xml: route the registered com.tecnobros.battlylauncher://callback URI into the launcher.
+- MainMenuFragment.java and fragment_launcher.xml: show a NEXUS MUSIC mini-player with connect, previous, play/pause, and next controls.
+- Playback requests use Spotify Web API and the scopes user-read-playback-state and user-modify-playback-state.
+
+Limitations before release:
+- This implementation has not yet been built or tested on a physical Android device.
+- Playback control endpoints require Spotify Premium and an active Spotify Connect device. Spotify's API does not provide audio streaming to NEXUS; playback remains in Spotify.
+- The current mini-player is in the launcher home screen, not an in-game Minecraft overlay.
+- The user must authorize NEXUS again after installing a build that requests the additional playback scopes.
+- Re-check Spotify's current Developer Mode access limits and policies before distributing the app.
