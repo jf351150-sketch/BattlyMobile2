@@ -1955,4 +1955,7 @@
     <string name="nexus_background_free_desc">Free custom background: choose an image from your device. Animated options remain Plus features.</string>
 
     <string name="nexus_performance_profile_title">NEXUS device performance</string>
+
+    <string name="nexus_creator_name">Joel</string>
+    <string name="nexus_creator_role">Creador de NEXUS</string>
 </resources>
