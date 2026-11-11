@@ -75,6 +75,7 @@ import net.kdt.pojavlaunch.tasks.AsyncMinecraftDownloader;
 import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.tasks.MinecraftDownloader;
 import net.kdt.pojavlaunch.utils.BattlyBackgrounds;
+import net.kdt.pojavlaunch.utils.NexusSpotifyAuth;
 import net.kdt.pojavlaunch.utils.BattlyInAppMessaging;
 import net.kdt.pojavlaunch.utils.BattlyPlusCloud;
 import net.kdt.pojavlaunch.utils.BattlyPlusManager;
@@ -471,6 +472,7 @@ public class LauncherActivity extends BaseActivity {
         setContentView(R.layout.activity_pojav_launcher);
         TextView buildBadge = findViewById(R.id.launcher_build_badge);
         buildBadge.setText(getString(R.string.launcher_mobile_badge_dynamic, BuildConfig.VERSION_NAME));
+        NexusSpotifyAuth.handleCallback(this, getIntent());
         handleBattlyOAuthIntent(getIntent());
         FragmentManager fragmentManager = getSupportFragmentManager();
         // If we don't have a back stack root yet...
@@ -646,6 +648,7 @@ public class LauncherActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        NexusSpotifyAuth.handleCallback(this, intent);
         handleBattlyOAuthIntent(intent);
         BattlyWorldsInvites.handleLauncherIntent(this, intent);
         handleBattlySocialIntent(intent);
