@@ -7,7 +7,8 @@ NEXUS MUSIC is an in-launcher music panel for Android. It must let the user:
 - See current track, artist, artwork, playback state and context.
 - Use play/pause, next, previous and supported playback controls.
 - Keep Spotify playing while Minecraft Java is in the foreground, where Android and Spotify permit background playback.
-- Use a compact/floating NEXUS player overlay in the launcher UI, with independent UI visibility (not an independent audio stream).
+- Show a compact mini-player inside the NEXUS launcher.
+- While Minecraft is in the foreground, rely on Spotify's Android media notification, lock-screen and system media controls. Do not promise that NEXUS's in-launcher panel is visible over the game; avoid requesting Android overlay permission for the first version.
 - Keep local NEXUS favorites/recently opened playlist references and a local queue of Spotify URIs, subject to Spotify API rules.
 
 ## Supported architecture
@@ -27,7 +28,7 @@ The Spotify Android app must be installed and the user must authorize NEXUS for 
 1. Add a dedicated NEXUS MUSIC feature package and UI state model without touching Minecraft runtime code.
 2. Add the official SDK artifacts and OAuth PKCE flow after the app's Spotify Developer Dashboard client ID and Android redirect URI are configured.
 3. Implement account connection, playlist retrieval, App Remote connection, player-state subscription and basic controls.
-4. Add a compact player panel and test background playback while Minecraft is running on real Android hardware.
+4. Add the launcher mini-player and verify Spotify's system media controls remain available while Minecraft runs on real Android hardware.
 5. Add robust disconnect, token expiry, no-Spotify-installed, offline, permission-denied and non-Premium capability states.
 
 ## Configuration required before live Spotify authentication
