@@ -369,12 +369,6 @@ public class MainMenuFragment extends Fragment {
         super.onStop();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateSpotifyConnectionUi();
-    }
-
     private void bindNewsPanel(View view) {
         mNewsPager = view.findViewById(R.id.launcher_news_pager);
         mNewsCardAdapter = new NewsCardAdapter();
@@ -594,6 +588,7 @@ public class MainMenuFragment extends Fragment {
         setPlayLoading(false);
         refreshLauncherProfileUi();
         updateBattlySkinButton();
+        updateSpotifyConnectionUi();
     }
 
     @Override
