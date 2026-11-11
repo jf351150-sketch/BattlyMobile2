@@ -52,7 +52,7 @@ public final class BattlyBackgrounds {
             new BackgroundOption("custom_07", R.drawable.bg_battly_custom_07, 7),
             new BackgroundOption("custom_08", R.drawable.bg_battly_custom_08, 8),
             new BackgroundOption(ANIMATED_KEY, R.drawable.bg_battly_custom_06, -1, true, true, false),
-            new BackgroundOption(CUSTOM_FILE_KEY, R.drawable.background, -2, true, false, true)
+            new BackgroundOption(CUSTOM_FILE_KEY, R.drawable.background, -2, false, false, true)
     };
 
     private static final int[] ANIMATED_RESOURCES = new int[] {
@@ -76,7 +76,7 @@ public final class BattlyBackgrounds {
             return;
         }
         String selectedKey = getSelectedKey(context);
-        if (CUSTOM_FILE_KEY.equals(selectedKey) && BattlyPlusManager.isPlus(context)) {
+        if (CUSTOM_FILE_KEY.equals(selectedKey)) {
             File customFile = getCustomBackgroundFile(context);
             if (customFile.exists()) {
                 if (isCustomVideoSelected(context)) {
@@ -119,7 +119,7 @@ public final class BattlyBackgrounds {
     }
 
     public static boolean isCustomSelected(Context context) {
-        return CUSTOM_FILE_KEY.equals(getSelectedKey(context)) && BattlyPlusManager.isPlus(context)
+        return CUSTOM_FILE_KEY.equals(getSelectedKey(context))
                 && getCustomBackgroundFile(context).exists();
     }
 
