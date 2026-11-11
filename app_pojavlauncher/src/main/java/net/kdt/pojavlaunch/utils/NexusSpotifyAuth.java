@@ -198,10 +198,10 @@ public final class NexusSpotifyAuth {
                         .header("Authorization", "Bearer " + accessToken);
                 if ("GET".equals(method)) builder.get();
                 else if ("PUT".equals(method)) builder.put(
-                        okhttp3.RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),
-                                (payload == null ? "" : payload).getBytes(StandardCharsets.UTF_8)));
-                else builder.post(okhttp3.RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),
-                        (payload == null ? "" : payload).getBytes(StandardCharsets.UTF_8)));
+                        okhttp3.RequestBody.create((payload == null ? "" : payload),
+                                okhttp3.MediaType.get("application/json; charset=utf-8")));
+                else builder.post(okhttp3.RequestBody.create((payload == null ? "" : payload),
+                        okhttp3.MediaType.get("application/json; charset=utf-8")));
                 try (Response response = HTTP.newCall(builder.build()).execute()) {
                     if (response.code() == 204) {
                         callback.onResult("OK:Comando enviado a Spotify.");
