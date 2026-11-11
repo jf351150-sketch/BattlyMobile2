@@ -11,6 +11,8 @@ import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import android.widget.Toast;
 
+import net.kdt.pojavlaunch.R;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -99,12 +101,12 @@ public final class NexusSpotifyAuth {
         intent.setData(null);
 
         if (error != null) {
-            notify(context, "Spotify canceló la autorización: " + error);
+            postToast(context, "Spotify canceló la autorización: " + error);
             return true;
         }
         if (code == null || verifier == null || expectedState == null
                 || returnedState == null || !constantTimeEquals(expectedState, returnedState)) {
-            notify(context, "Respuesta de Spotify no válida. Intenta conectar de nuevo.");
+            postToast(context, "Respuesta de Spotify no válida. Intenta conectar de nuevo.");
             return true;
         }
         exchangeCode(context.getApplicationContext(), code, verifier);
@@ -123,12 +125,12 @@ public final class NexusSpotifyAuth {
                 .url("https://accounts.spotify.com/api/token").post(body).build();
         HTTP.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
-                notify(context, "No se pudo conectar con Spotify. Revisa tu internet.");
+                postToast(context, "No se pudo conectar con Spotify. Revisa tu internet.");
             }
             @Override public void onResponse(Call call, Response response) throws IOException {
                 try (Response res = response) {
                     if (!res.isSuccessful() || res.body() == null) {
-                        notify(context, "Spotify rechazó la conexión (HTTP " + res.code() + ").");
+                        postToast(context, "Spotify rechazó la conexión (HTTP " + res.code() + ").");
                         return;
                     }
                     JSONObject json = new JSONObject(res.body().string());
@@ -144,9 +146,9 @@ public final class NexusSpotifyAuth {
                     context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
                             .putString(KEY_TOKEN, encrypted).apply();
                     context.sendBroadcast(new Intent(ACTION_CONNECTED).setPackage(context.getPackageName()));
-                    notify(context, "Spotify conectado a NEXUS.");
+                    postToast(context, "Spotify conectado a NEXUS.");
                 } catch (Exception e) {
-                    notify(context, "No se pudo guardar la autorización de Spotify.");
+                    postToast(context, "No se pudo guardar la autorización de Spotify.");
                 }
             }
         });
@@ -312,7 +314,7 @@ public final class NexusSpotifyAuth {
                 b.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static void notify(Context context, String message) {
+    private static void postToast(Context context, String message) {
         MAIN.post(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
     }
 }
