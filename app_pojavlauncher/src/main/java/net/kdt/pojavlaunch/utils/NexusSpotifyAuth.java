@@ -38,6 +38,7 @@ import okhttp3.Response;
  */
 public final class NexusSpotifyAuth {
     public static final String REDIRECT_URI = "com.tecnobros.battlylauncher://callback";
+    public static final String ACTION_CONNECTED = "net.kdt.pojavlaunch.action.SPOTIFY_CONNECTED";
     private static final String CLIENT_ID = "4fe2ba20507d4b8d8406c43a4ce8e860";
     private static final String PREFS = "nexus_spotify_auth";
     private static final String KEY_VERIFIER = "pkce_verifier";
@@ -142,6 +143,7 @@ public final class NexusSpotifyAuth {
                     String encrypted = encrypt(stored.toString());
                     context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
                             .putString(KEY_TOKEN, encrypted).apply();
+                    context.sendBroadcast(new Intent(ACTION_CONNECTED).setPackage(context.getPackageName()));
                     notify(context, "Spotify conectado a NEXUS.");
                 } catch (Exception e) {
                     notify(context, "No se pudo guardar la autorización de Spotify.");
