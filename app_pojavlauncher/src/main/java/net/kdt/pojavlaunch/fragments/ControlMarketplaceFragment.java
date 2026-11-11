@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.kdt.pojavlaunch.CustomControlsActivity;
+import net.kdt.pojavlaunch.customcontrols.CustomControls;
+import net.kdt.pojavlaunch.customcontrols.FclControlsConverter;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
@@ -250,6 +252,7 @@ public class ControlMarketplaceFragment extends Fragment {
                             ? resp.optJSONArray("items") : new JSONArray();
                     final int pages = resp.optInt("pages", 1);
                     final int total = resp.optInt("total", 0);
+                    appendFclCatalog(items, q);
                     mTotalPages = pages;
 
                     Activity activity = getActivity();
@@ -286,6 +289,18 @@ public class ControlMarketplaceFragment extends Fragment {
     }
 
     private void onApplyControl(JSONObject item) {
+        if ("fcl".equals(item.optString("source"))) {
+            String id = item.optString("_id", "");
+            String name = item.optString("name", "FoldCraft control");
+            if (id.isEmpty()) return;
+            new AlertDialog.Builder(requireContext(), R.style.BattlyDialog)
+                    .setTitle(R.string.ctrl_apply_title)
+                    .setMessage("Import " + name + " from the official FoldCraft Controls repository? Basic buttons will be converted; advanced actions may be skipped.")
+                    .setPositiveButton(android.R.string.ok, (d, w) -> downloadFclAndApply(id, name))
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+            return;
+        }
         String id = item.optString("_id", "");
         String name = item.optString("name", "control");
         if (id.isEmpty()) return;
@@ -296,6 +311,74 @@ public class ControlMarketplaceFragment extends Fragment {
                 .setPositiveButton(android.R.string.ok, (d, w) -> downloadAndApply(id, name))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+    }
+
+
+    private void appendFclCatalog(JSONArray items, String query) {
+        try {
+            JSONArray catalog = FclControlsConverter.fetchCatalog();
+            String needle = query == null ? "" : query.trim().toLowerCase(java.util.Locale.ROOT);
+            for (int i = 0; i < catalog.length(); i++) {
+                JSONObject entry = catalog.optJSONObject(i);
+                if (entry == null) continue;
+                String id = entry.optString("id", "");
+                String name = entry.optString("name", "FoldCraft layout");
+                String description = entry.optString("introduction", "");
+                if (!id.matches("[a-fA-F0-9]{8}")) continue;
+                if (!needle.isEmpty() && !name.toLowerCase(java.util.Locale.ROOT).contains(needle)
+                        && !description.toLowerCase(java.util.Locale.ROOT).contains(needle)) continue;
+                JSONObject card = new JSONObject();
+                card.put("_id", "fcl_" + id);
+                card.put("source", "fcl");
+                card.put("name", name);
+                card.put("ownerName", "FoldCraft community");
+                card.put("description", description);
+                card.put("tags", new JSONArray().put("FoldCraft").put("Official repository"));
+                card.put("downloads", 0);
+                card.put("likes", 0);
+                items.put(card);
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "FoldCraft catalog unavailable; keeping Nexus marketplace results", e);
+        }
+    }
+
+    private void downloadFclAndApply(String catalogId, String name) {
+        String id = catalogId.startsWith("fcl_") ? catalogId.substring(4) : catalogId;
+        mProgressBar.setVisibility(View.VISIBLE);
+        new Thread(() -> {
+            try {
+                JSONObject fclJson = FclControlsConverter.fetchLatest(id);
+                CustomControls converted = FclControlsConverter.convert(fclJson);
+                String safeName = safeFileName("FCL_" + name);
+                File ctrlDir = new File(Tools.CTRLMAP_PATH);
+                if (!ctrlDir.exists() && !ctrlDir.mkdirs()) throw new Exception("Cannot create controls folder");
+                File outFile = new File(ctrlDir, safeName + ".json");
+                File tempFile = new File(ctrlDir, safeName + ".json.tmp");
+                converted.save(tempFile.getAbsolutePath());
+                if (outFile.exists() && !outFile.delete()) throw new Exception("Cannot replace imported layout");
+                if (!tempFile.renameTo(outFile)) throw new Exception("Cannot finalize imported layout");
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> {
+                    mProgressBar.setVisibility(View.GONE);
+                    new AlertDialog.Builder(requireContext(), R.style.BattlyDialog)
+                            .setTitle(R.string.ctrl_set_default_title)
+                            .setMessage(getString(R.string.ctrl_set_default_msg, safeName))
+                            .setPositiveButton(R.string.ctrl_set_default_yes, (d, w) -> {
+                                String path = outFile.getAbsolutePath();
+                                LauncherPreferences.PREF_DEFAULTCTRL_PATH = path;
+                                LauncherPreferences.DEFAULT_PREF.edit().putString("defaultCtrl", path).apply();
+                                Toast.makeText(requireContext(), "FoldCraft layout imported and selected", Toast.LENGTH_LONG).show();
+                            })
+                            .setNegativeButton(R.string.ctrl_set_default_no, (d, w) ->
+                                    Toast.makeText(requireContext(), "FoldCraft layout imported", Toast.LENGTH_LONG).show())
+                            .show();
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "FoldCraft import failed", e);
+                showErrorOnUi("Could not import this FoldCraft layout. It may use unsupported advanced controls.");
+            }
+        }).start();
     }
 
     private void onPreviewControl(JSONObject item) {
