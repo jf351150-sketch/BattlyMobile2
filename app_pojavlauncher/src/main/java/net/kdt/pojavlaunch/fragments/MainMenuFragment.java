@@ -328,13 +328,13 @@ public class MainMenuFragment extends Fragment {
     private void applySpotifyPlaybackMessage(String message) {
         if (message == null || mSpotifyStatus == null || mSpotifyTitle == null || mSpotifyToggle == null) return;
         if (message.startsWith("PLAYING:")) {
-            mSpotifyTitle.setText("NEXUS MUSIC · REPRODUCIENDO");
+            mSpotifyTitle.setText(R.string.nexus_spotify_playing);
             mSpotifyStatus.setText(message.substring("PLAYING:".length()));
-            mSpotifyToggle.setText("Ⅱ");
+            mSpotifyToggle.setText(R.string.nexus_spotify_pause_icon);
         } else if (message.startsWith("PAUSED:")) {
-            mSpotifyTitle.setText("NEXUS MUSIC · EN PAUSA");
+            mSpotifyTitle.setText(R.string.nexus_spotify_paused);
             mSpotifyStatus.setText(message.substring("PAUSED:".length()));
-            mSpotifyToggle.setText("▶");
+            mSpotifyToggle.setText(R.string.nexus_spotify_play_icon);
         } else if (message.startsWith("ERROR:")) {
             updateSpotifyStatus(message.substring("ERROR:".length()));
         } else if (message.startsWith("OK:")) {
