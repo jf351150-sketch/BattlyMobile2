@@ -295,7 +295,7 @@ public class ControlMarketplaceFragment extends Fragment {
             if (id.isEmpty()) return;
             new AlertDialog.Builder(requireContext(), R.style.BattlyDialog)
                     .setTitle(R.string.ctrl_apply_title)
-                    .setMessage("Import " + name + " from the official FoldCraft Controls repository? Basic buttons will be converted; advanced actions may be skipped.")
+                    .setMessage(getString(R.string.fcl_import_confirm, name))
                     .setPositiveButton(android.R.string.ok, (d, w) -> downloadFclAndApply(id, name))
                     .setNegativeButton(android.R.string.cancel, null)
                     .show();
@@ -368,10 +368,10 @@ public class ControlMarketplaceFragment extends Fragment {
                                 String path = outFile.getAbsolutePath();
                                 LauncherPreferences.PREF_DEFAULTCTRL_PATH = path;
                                 LauncherPreferences.DEFAULT_PREF.edit().putString("defaultCtrl", path).apply();
-                                Toast.makeText(requireContext(), "FoldCraft layout imported and selected", Toast.LENGTH_LONG).show();
+                                Toast.makeText(requireContext(), R.string.fcl_import_selected, Toast.LENGTH_LONG).show();
                             })
                             .setNegativeButton(R.string.ctrl_set_default_no, (d, w) ->
-                                    Toast.makeText(requireContext(), "FoldCraft layout imported", Toast.LENGTH_LONG).show())
+                                    Toast.makeText(requireContext(), R.string.fcl_import_done, Toast.LENGTH_LONG).show())
                             .show();
                 });
             } catch (Exception e) {
