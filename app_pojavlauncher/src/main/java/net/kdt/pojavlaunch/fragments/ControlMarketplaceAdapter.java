@@ -239,7 +239,9 @@ public class ControlMarketplaceAdapter extends RecyclerView.Adapter<RecyclerView
 
             boolean liked = listener.isLiked(item);
             boolean saved = listener.isSaved(item);
-            mPreviewBtn.setText(R.string.ctrl_preview_btn);
+            boolean fclSource = "fcl".equals(item.optString("source"));
+            mPreviewBtn.setText(fclSource ? "Import only" : mPreviewBtn.getContext().getString(R.string.ctrl_preview_btn));
+            mPreviewBtn.setEnabled(!fclSource);
             mApplyBtn.setText(R.string.ctrl_apply_btn);
             mLikeBtn.setText(liked ? R.string.ctrl_liked_btn : R.string.ctrl_like_btn);
             mSaveBtn.setText(saved ? R.string.ctrl_saved_btn : R.string.ctrl_save_btn);
@@ -248,7 +250,9 @@ public class ControlMarketplaceAdapter extends RecyclerView.Adapter<RecyclerView
             setButtonIcon(mLikeBtn, liked ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
             setButtonIcon(mSaveBtn, saved ? android.R.drawable.ic_menu_agenda : android.R.drawable.ic_menu_add);
             mApplyBtn.setOnClickListener(v -> listener.onApply(item));
-            mPreviewBtn.setOnClickListener(v -> listener.onPreview(item));
+            mPreviewBtn.setOnClickListener(v -> {
+                if (!fclSource) listener.onPreview(item);
+            });
             mLikeBtn.setOnClickListener(v -> listener.onLike(item));
             mSaveBtn.setOnClickListener(v -> listener.onSave(item));
         }
