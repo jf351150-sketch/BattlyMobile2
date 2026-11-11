@@ -255,7 +255,7 @@
     <string name="credits_version">Version 2.2.9</string>
     <string name="credits_based_on">Based on PojavLauncher and Boardwalk</string>
     <string name="credits_section_title">Credits</string>
-    <string name="credits_primary_development">Main development</string>
+    <string name="credits_primary_development">Original project and main development</string>
     <string name="credits_base_fork">Base fork</string>
     <string name="credits_game_engine">Game engine</string>
     <string name="credits_pojav_founder">PojavLauncher founder</string>
