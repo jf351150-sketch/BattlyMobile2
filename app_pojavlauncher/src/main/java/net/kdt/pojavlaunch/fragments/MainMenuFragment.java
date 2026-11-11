@@ -43,6 +43,7 @@ import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchFilters;
 import net.kdt.pojavlaunch.utils.DownloadUtils;
+import net.kdt.pojavlaunch.utils.NexusSpotifyAuth;
 import net.kdt.pojavlaunch.utils.LocaleUtils;
 import net.kdt.pojavlaunch.utils.NewsLocalePolicy;
 import net.kdt.pojavlaunch.utils.BattlyHomeHubDialog;
@@ -83,6 +84,10 @@ public class MainMenuFragment extends Fragment {
     private RecyclerView mNewsPager;
     private NewsCardAdapter mNewsCardAdapter;
     private boolean mLaunchStarting;
+    private TextView mSpotifyStatus;
+    private TextView mSpotifyTitle;
+    private TextView mSpotifyConnect;
+    private TextView mSpotifyToggle;
 
     private final ExtraListener<Boolean> mLaunchUiResetListener = (key, value) -> {
         Tools.runOnUiThread(() -> setPlayLoading(false));
@@ -110,6 +115,24 @@ public class MainMenuFragment extends Fragment {
         mSelectedVersionLabel = view.findViewById(R.id.selected_version_label);
         mVersionSpinner = view.findViewById(R.id.mc_version_spinner);
         bindNewsPanel(view);
+        mSpotifyStatus = view.findViewById(R.id.nexus_spotify_status);
+        mSpotifyTitle = view.findViewById(R.id.nexus_spotify_title);
+        mSpotifyConnect = view.findViewById(R.id.nexus_spotify_connect);
+        mSpotifyToggle = view.findViewById(R.id.nexus_spotify_toggle);
+        View spotifyPrevious = view.findViewById(R.id.nexus_spotify_previous);
+        View spotifyNext = view.findViewById(R.id.nexus_spotify_next);
+        mSpotifyConnect.setOnClickListener(v -> {
+            if (!NexusSpotifyAuth.isConnected(requireContext())) {
+                NexusSpotifyAuth.start(requireActivity());
+            } else {
+                updateSpotifyStatus("Spotify ya está conectado. Abre Spotify para iniciar música.");
+            }
+        });
+        spotifyPrevious.setOnClickListener(v -> runSpotifyAction(NexusSpotifyAuth::previous));
+        spotifyNext.setOnClickListener(v -> runSpotifyAction(NexusSpotifyAuth::next));
+        mSpotifyToggle.setOnClickListener(v -> runSpotifyAction(NexusSpotifyAuth::playPause));
+        updateSpotifyConnectionUi();
+
         ExtraCore.addExtraListener(ExtraConstants.LAUNCH_GAME_UI_RESET, mLaunchUiResetListener);
 
         toolsButton.setOnClickListener(v -> Tools.swapFragment(activity,
@@ -243,6 +266,80 @@ public class MainMenuFragment extends Fragment {
                 updateSelectedVersionLabel();
             }
         }
+    }
+
+
+    private interface SpotifyAction {
+        void run(android.content.Context context, NexusSpotifyAuth.PlaybackCallback callback);
+    }
+
+    private void updateSpotifyConnectionUi() {
+        if (mSpotifyStatus == null || !isAdded()) return;
+        boolean connected = NexusSpotifyAuth.isConnected(requireContext());
+        mSpotifyConnect.setVisibility(connected ? View.GONE : View.VISIBLE);
+        mSpotifyToggle.setVisibility(connected ? View.VISIBLE : View.GONE);
+        View previous = getView() == null ? null : getView().findViewById(R.id.nexus_spotify_previous);
+        View next = getView() == null ? null : getView().findViewById(R.id.nexus_spotify_next);
+        if (previous != null) previous.setVisibility(connected ? View.VISIBLE : View.GONE);
+        if (next != null) next.setVisibility(connected ? View.VISIBLE : View.GONE);
+        mSpotifyStatus.setText(connected
+                ? "Cuenta conectada · abre Spotify para reproducir"
+                : "Conecta Spotify para controlar tu música");
+        if (connected) {
+            NexusSpotifyAuth.refreshPlayback(requireContext(), message -> {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> applySpotifyPlaybackMessage(message));
+            });
+        }
+    }
+
+    private void runSpotifyAction(SpotifyAction action) {
+        if (!isAdded() || !NexusSpotifyAuth.isConnected(requireContext())) {
+            updateSpotifyStatus("Primero conecta tu cuenta de Spotify.");
+            return;
+        }
+        updateSpotifyStatus("Conectando con Spotify…");
+        action.run(requireContext(), message -> {
+            if (!isAdded()) return;
+            requireActivity().runOnUiThread(() -> {
+                applySpotifyPlaybackMessage(message);
+                if (message.startsWith("OK:")) {
+                    NexusSpotifyAuth.refreshPlayback(requireContext(), state -> {
+                        if (!isAdded()) return;
+                        requireActivity().runOnUiThread(() -> applySpotifyPlaybackMessage(state));
+                    });
+                }
+            });
+        });
+    }
+
+    private void applySpotifyPlaybackMessage(String message) {
+        if (message == null) return;
+        if (message.startsWith("PLAYING:")) {
+            mSpotifyTitle.setText("NEXUS MUSIC · REPRODUCIENDO");
+            mSpotifyStatus.setText(message.substring("PLAYING:".length()));
+            mSpotifyToggle.setText("Ⅱ");
+        } else if (message.startsWith("PAUSED:")) {
+            mSpotifyTitle.setText("NEXUS MUSIC · EN PAUSA");
+            mSpotifyStatus.setText(message.substring("PAUSED:".length()));
+            mSpotifyToggle.setText("▶");
+        } else if (message.startsWith("ERROR:")) {
+            updateSpotifyStatus(message.substring("ERROR:".length()));
+        } else if (message.startsWith("OK:")) {
+            updateSpotifyStatus(message.substring("OK:".length()));
+        } else {
+            updateSpotifyStatus(message);
+        }
+    }
+
+    private void updateSpotifyStatus(String message) {
+        if (mSpotifyStatus != null) mSpotifyStatus.setText(message);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateSpotifyConnectionUi();
     }
 
     private void bindNewsPanel(View view) {
