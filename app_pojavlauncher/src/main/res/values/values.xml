@@ -43,4 +43,17 @@
 
     <integer name="touchcontrller_vibrate_length_min">10</integer>
     <integer name="touchcontrller_vibrate_length_max">1000</integer>
+
+    <string-array name="nexus_performance_profile_entries">
+        <item>Automático (recomendado)</item>
+        <item>Gama baja</item>
+        <item>Gama media</item>
+        <item>Gama alta</item>
+    </string-array>
+    <string-array name="nexus_performance_profile_values">
+        <item>auto</item>
+        <item>low</item>
+        <item>medium</item>
+        <item>high</item>
+    </string-array>
 </resources>
