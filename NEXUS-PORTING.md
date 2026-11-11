@@ -34,6 +34,7 @@ NEXUS is a customized Android-first Minecraft Java launcher based on this Battly
   - Medium tier applies 75% render resolution and sustained-performance mode.
   - High tier applies 100% render resolution and disables sustained-performance limiting.
   - Profiles do not silently change the selected Java runtime or renderer.
+- Joel is credited as NEXUS creator in the in-app credits; upstream contributors remain credited.
 
 ### Existing engine features retained from Battly Mobile 2
 - Minecraft Java version/runtime management and existing launch flow.
@@ -46,7 +47,7 @@ NEXUS is a customized Android-first Minecraft Java launcher based on this Battly
 2. Test install, version/runtime download, and first Minecraft launch on a real Android device.
 3. Verify free custom background selection and persistence.
 4. Test each performance tier on representative low-, mid-, and high-end devices; tune thresholds based on results.
-5. Rebrand remaining visible Battly UI/assets and add NEXUS / “Creado por Joel” credits while preserving upstream license notices.
+5. Rebrand remaining visible Battly UI/assets while preserving upstream license notices.
 6. Test control marketplace downloads/imports and shader/resource-pack flows end-to-end.
 7. Finish Spotify account disconnect, playlist browsing and robust error handling.
 8. Begin Windows client planning only after Android launch is stable.
