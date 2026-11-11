@@ -470,6 +470,12 @@ public class LauncherActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pojav_launcher);
+        // Re-apply the saved Nexus profile at every launcher start.
+        String nexusProfile = LauncherPreferences.DEFAULT_PREF == null
+                ? NexusPerformanceProfiles.AUTO
+                : LauncherPreferences.DEFAULT_PREF.getString(
+                        NexusPerformanceProfiles.PREF_PROFILE, NexusPerformanceProfiles.AUTO);
+        NexusPerformanceProfiles.apply(this, nexusProfile);
         TextView buildBadge = findViewById(R.id.launcher_build_badge);
         buildBadge.setText(getString(R.string.launcher_mobile_badge_dynamic, BuildConfig.VERSION_NAME));
         NexusSpotifyAuth.handleCallback(this, getIntent());
