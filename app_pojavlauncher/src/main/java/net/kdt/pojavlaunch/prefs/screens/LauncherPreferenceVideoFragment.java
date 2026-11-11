@@ -50,8 +50,8 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
             nexusProfile.setSummary("Detectado: " + NexusPerformanceProfiles.describe(
                     requireContext(), String.valueOf(newValue)));
             Toast.makeText(requireContext(),
-                    "Perfil NEXUS aplicado: " + NexusPerformanceProfiles.describe(
-                            requireContext(), String.valueOf(newValue)),
+                    getString(R.string.nexus_performance_applied, NexusPerformanceProfiles.describe(
+                            requireContext(), String.valueOf(newValue))),
                     Toast.LENGTH_LONG).show();
             return true;
         });
