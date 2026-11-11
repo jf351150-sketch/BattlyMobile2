@@ -72,6 +72,33 @@
             android:letterSpacing="0.1"
             android:textStyle="bold" />
 
+        <!-- NEXUS creator card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_battly_form_panel"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/nexus_creator_name"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nexus_creator_role"
+                android:textColor="#8BE7D4"
+                android:textSize="12sp" />
+        </LinearLayout>
+
         <!-- Battly card -->
         <LinearLayout
             android:layout_width="match_parent"
