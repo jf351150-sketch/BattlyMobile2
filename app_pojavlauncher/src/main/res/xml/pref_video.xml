@@ -4,6 +4,16 @@
     xmlns:app2="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/preference_category_video" >
+        <androidx.preference.ListPreference
+            android:key="nexus_performance_profile"
+            android:title="@string/nexus_performance_profile_title"
+            android:summary="%s"
+            android:defaultValue="auto"
+            android:entries="@array/nexus_performance_profile_entries"
+            android:entryValues="@array/nexus_performance_profile_values"
+            android:icon="@drawable/ic_setting_engine"
+            app2:useSimpleSummaryProvider="true" />
+
         <net.kdt.pojavlaunch.prefs.NoDialogListPreference
             android:key="renderer"
             android:title="@string/preference_renderer_title"
@@ -11,6 +21,7 @@
             android:defaultValue="auto"
             android:icon="@drawable/ic_setting_engine"
             app2:useSimpleSummaryProvider="true" />
+
 
         <androidx.preference.ListPreference
             android:key="graphicsProfile"
