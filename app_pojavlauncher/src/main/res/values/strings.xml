@@ -1953,4 +1953,6 @@
     <string name="peripheral_mouse_result">%1$s\nAndroid X / Y: %2$s\nGame X / Y: %3$s\nSamples: %4$d</string>
     <string name="peripheral_key_result">%1$s\nKey: %2$s · Scan: %3$d · Repeat: %4$d\nHeld: %5$s</string>
     <string name="nexus_background_free_desc">Free custom background: choose an image from your device. Animated options remain Plus features.</string>
+
+    <string name="nexus_performance_profile_title">NEXUS device performance</string>
 </resources>
