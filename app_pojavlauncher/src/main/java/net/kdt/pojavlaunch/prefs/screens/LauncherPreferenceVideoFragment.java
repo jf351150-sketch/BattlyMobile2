@@ -26,6 +26,7 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.prefs.CustomSeekBarPreference;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.utils.RendererPluginRegistry;
+import net.kdt.pojavlaunch.utils.NexusPerformanceProfiles;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,6 +40,17 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
     @Override
     public void onCreatePreferences(Bundle b, String str) {
         addPreferencesFromResource(R.xml.pref_video);
+        ListPreference nexusProfile = requirePreference(
+                NexusPerformanceProfiles.PREF_PROFILE, ListPreference.class);
+        nexusProfile.setOnPreferenceChangeListener((preference, newValue) -> {
+            NexusPerformanceProfiles.apply(requireContext(), String.valueOf(newValue));
+            Toast.makeText(requireContext(),
+                    "Perfil NEXUS: " + NexusPerformanceProfiles.describe(
+                            requireContext(), String.valueOf(newValue)),
+                    Toast.LENGTH_LONG).show();
+            return true;
+        });
+
         int resolution = (int) (LauncherPreferences.PREF_SCALE_FACTOR * 100);
 
         //Disable notch checking behavior on android 8.1 and below.
