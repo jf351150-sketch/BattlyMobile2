@@ -76,6 +76,7 @@ import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.tasks.MinecraftDownloader;
 import net.kdt.pojavlaunch.utils.BattlyBackgrounds;
 import net.kdt.pojavlaunch.utils.NexusSpotifyAuth;
+import net.kdt.pojavlaunch.utils.NexusPerformanceProfiles;
 import net.kdt.pojavlaunch.utils.BattlyInAppMessaging;
 import net.kdt.pojavlaunch.utils.BattlyPlusCloud;
 import net.kdt.pojavlaunch.utils.BattlyPlusManager;
