@@ -53,7 +53,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="14dp"
         android:background="@android:color/transparent"
-        app:layout_constraintBottom_toTopOf="@+id/play_button"
+        app:layout_constraintBottom_toTopOf="@+id/nexus_spotify_panel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -105,6 +105,102 @@
             android:text="@string/launcher_versions_button"
             android:textColor="#FFFFFFFF"
             android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nexus_spotify_panel"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="5dp"
+        android:background="#D91B2633"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@id/play_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/nexus_spotify_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="NEXUS MUSIC"
+                android:textColor="#FFFFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/nexus_spotify_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Conecta Spotify para controlar tu música"
+                android:textColor="#FFB7C7D5"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/nexus_spotify_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:minWidth="74dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="Conectar"
+            android:textColor="#FFFFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/nexus_spotify_previous"
+            android:layout_width="34dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="|◀"
+            android:textColor="#FFFFFFFF"
+            android:textSize="15sp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/nexus_spotify_toggle"
+            android:layout_width="38dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="▶"
+            android:textColor="#FFFFFFFF"
+            android:textSize="18sp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/nexus_spotify_next"
+            android:layout_width="34dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="▶|"
+            android:textColor="#FFFFFFFF"
+            android:textSize="15sp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true" />
     </LinearLayout>
 
     <FrameLayout
