@@ -4,6 +4,10 @@ import static net.kdt.pojavlaunch.Tools.openPath;
 import static net.kdt.pojavlaunch.Tools.shareLog;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.os.Build;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -88,6 +92,14 @@ public class MainMenuFragment extends Fragment {
     private TextView mSpotifyTitle;
     private TextView mSpotifyConnect;
     private TextView mSpotifyToggle;
+
+    private final BroadcastReceiver mSpotifyConnectedReceiver = new BroadcastReceiver() {
+        @Override public void onReceive(Context context, Intent intent) {
+            updateSpotifyConnectionUi();
+        }
+    };
+    private boolean mSpotifyReceiverRegistered;
+
 
     private final ExtraListener<Boolean> mLaunchUiResetListener = (key, value) -> {
         Tools.runOnUiThread(() -> setPlayLoading(false));
@@ -314,7 +326,7 @@ public class MainMenuFragment extends Fragment {
     }
 
     private void applySpotifyPlaybackMessage(String message) {
-        if (message == null) return;
+        if (message == null || mSpotifyStatus == null || mSpotifyTitle == null || mSpotifyToggle == null) return;
         if (message.startsWith("PLAYING:")) {
             mSpotifyTitle.setText("NEXUS MUSIC · REPRODUCIENDO");
             mSpotifyStatus.setText(message.substring("PLAYING:".length()));
@@ -334,6 +346,27 @@ public class MainMenuFragment extends Fragment {
 
     private void updateSpotifyStatus(String message) {
         if (mSpotifyStatus != null) mSpotifyStatus.setText(message);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter(NexusSpotifyAuth.ACTION_CONNECTED);
+        if (Build.VERSION.SDK_INT >= 33) {
+            requireContext().registerReceiver(mSpotifyConnectedReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            requireContext().registerReceiver(mSpotifyConnectedReceiver, filter);
+        }
+        mSpotifyReceiverRegistered = true;
+    }
+
+    @Override
+    public void onStop() {
+        if (mSpotifyReceiverRegistered) {
+            requireContext().unregisterReceiver(mSpotifyConnectedReceiver);
+            mSpotifyReceiverRegistered = false;
+        }
+        super.onStop();
     }
 
     @Override
