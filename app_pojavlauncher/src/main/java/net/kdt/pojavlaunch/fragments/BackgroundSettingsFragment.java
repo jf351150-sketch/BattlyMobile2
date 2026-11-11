@@ -35,13 +35,13 @@ public class BackgroundSettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mGrid = view.findViewById(R.id.background_settings_grid);
         mPlusStatus = view.findViewById(R.id.background_plus_status);
-        bindPlusStatus(BattlyPlusManager.isPlus(requireContext()));
+        bindPlusStatus();
         populateGrid();
         BattlyPlusManager.refreshAsync(requireContext(), plus -> {
             if (!isAdded()) {
                 return;
             }
-            bindPlusStatus(plus);
+            bindPlusStatus();
             populateGrid();
         });
     }
@@ -54,17 +54,7 @@ public class BackgroundSettingsFragment extends Fragment {
                 this::applyLauncherBackground,
                 true,
                 () -> {
-                    if (!BattlyPlusManager.isPlus(requireContext())) {
-                        Toast.makeText(requireContext(), R.string.battly_plus_required, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    mPickBackgroundLauncher.launch(new String[]{
-                            "image/*",
-                            "image/gif",
-                            "video/*",
-                            "video/mp4",
-                            "video/webm"
-                    });
+                    mPickBackgroundLauncher.launch(new String[]{"image/*"});
                 });
     }
 
@@ -82,14 +72,12 @@ public class BackgroundSettingsFragment extends Fragment {
         }
     }
 
-    private void bindPlusStatus(boolean plus) {
+    private void bindPlusStatus() {
         if (mPlusStatus == null) {
             return;
         }
-        mPlusStatus.setText(plus
-                ? R.string.battly_background_plus_active
-                : R.string.battly_background_plus_locked_desc);
-        mPlusStatus.setTextColor(plus ? 0xFF8BE7D4 : 0xFFFFD65A);
+        mPlusStatus.setText(R.string.nexus_background_free_desc);
+        mPlusStatus.setTextColor(0xFF8BE7D4);
     }
 
     private void applyLauncherBackground() {
