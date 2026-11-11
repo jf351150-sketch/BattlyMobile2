@@ -1969,4 +1969,7 @@
     <string name="nexus_spotify_play_icon">▶</string>
     <string name="nexus_spotify_start_error">No se pudo iniciar Spotify: %1$s</string>
     <string name="nexus_performance_applied">Perfil NEXUS aplicado: %1$s</string>
+    <string name="fcl_import_confirm">Import %1$s from the official FoldCraft Controls repository? Basic buttons will be converted; advanced actions may be skipped.</string>
+    <string name="fcl_import_selected">FoldCraft layout imported and selected</string>
+    <string name="fcl_import_done">FoldCraft layout imported</string>
 </resources>
