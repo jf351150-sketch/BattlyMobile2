@@ -515,7 +515,7 @@ public class LauncherActivity extends BaseActivity {
         registerBattlyInAppReceiver();
         registerBattlyWorldsInviteReceiver();
 
-        BattlyUpdateVideoDialog.showIfNeeded(this, this::continueLauncherStartupAfterTrailer);
+        continueLauncherStartupAfterTrailer();
     }
 
     private void continueLauncherStartupAfterTrailer() {
@@ -587,9 +587,7 @@ public class LauncherActivity extends BaseActivity {
     private void showUpdateVideoWhenReady() {
         mStartupPromptHandler.postDelayed(() -> {
             if (!canShowStartupPrompt()) return;
-            BattlyUpdateVideoDialog.showIfNeeded(this,
-                    () -> showWhatsNewIfNeeded(
-                            () -> checkNotificationPermission(this::ensureJavaRuntimeAfterStartup)));
+            showWhatsNewIfNeeded(() -> checkNotificationPermission(this::ensureJavaRuntimeAfterStartup));
         }, 900);
     }
 
@@ -637,9 +635,9 @@ public class LauncherActivity extends BaseActivity {
         BattlyPlusManager.refreshAsync(this, plus -> {
             Runnable afterPlus = this::showUpdateVideoWhenReady;
             if (forcePlusWelcome) {
-                BattlyPlusWelcomeDialog.showAfterLogin(this, afterPlus);
+                afterPlus.run();
             } else {
-                BattlyPlusWelcomeDialog.showIfNeeded(this, afterPlus);
+                afterPlus.run();
             }
         });
     }
