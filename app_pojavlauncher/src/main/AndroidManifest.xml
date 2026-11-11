@@ -220,6 +220,17 @@
                     android:host="oauth"
                     android:scheme="battlymobile" />
             </intent-filter>
+            <!-- NEXUS Spotify OAuth callback; must exactly match the Spotify Dashboard URI. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="callback"
+                    android:scheme="com.tecnobros.battlylauncher" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".onboarding.OnboardingActivity"
