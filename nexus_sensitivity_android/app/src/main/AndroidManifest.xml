@@ -2,6 +2,7 @@
     <application
         android:allowBackup="true"
         android:label="Nexus Sensitivity"
+        android:icon="@drawable/nexus_icon"
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:usesCleartextTraffic="false"
         android:supportsRtl="true">
