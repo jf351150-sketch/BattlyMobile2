@@ -1,7 +1,9 @@
 package net.kdt.pojavlaunch.utils;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ConfigurationInfo;
 
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
@@ -21,10 +23,21 @@ public final class NexusPerformanceProfiles {
 
     public static String detect(Context context) {
         int ramMb = Tools.getTotalDeviceMemory(context);
-        int cores = Runtime.getRuntime().availableProcessors();
-        if (ramMb < 4096 || cores <= 4) return LOW;
-        if (ramMb >= 8192 && cores >= 8) return HIGH;
+        int cores = Math.max(1, Runtime.getRuntime().availableProcessors());
+        int glEs = getGlEsVersion(context);
+        if (ramMb < 4096 || cores <= 4 || glEs < 0x30000) return LOW;
+        if (ramMb >= 8192 && cores >= 8 && glEs >= 0x30200) return HIGH;
         return MEDIUM;
+    }
+
+    private static int getGlEsVersion(Context context) {
+        try {
+            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            ConfigurationInfo info = manager == null ? null : manager.getDeviceConfigurationInfo();
+            return info == null ? 0 : info.reqGlEsVersion;
+        } catch (Exception ignored) {
+            return 0;
+        }
     }
 
     public static String resolve(Context context, String requested) {
@@ -64,8 +77,12 @@ public final class NexusPerformanceProfiles {
 
     public static String describe(Context context, String requested) {
         String resolved = resolve(context, requested);
-        if (LOW.equals(resolved)) return "Gama baja · resolución 50% · modo térmico";
-        if (HIGH.equals(resolved)) return "Gama alta · resolución 100%";
-        return "Gama media · resolución 75% · modo térmico";
+        int ramMb = Tools.getTotalDeviceMemory(context);
+        int cores = Math.max(1, Runtime.getRuntime().availableProcessors());
+        String tier;
+        if (LOW.equals(resolved)) tier = "Bajo · resolución 50%";
+        else if (HIGH.equals(resolved)) tier = "Alto · resolución 100%";
+        else tier = "Medio · resolución 75%";
+        return tier + " · " + (ramMb / 1024) + " GB RAM · " + cores + " núcleos";
     }
 }
