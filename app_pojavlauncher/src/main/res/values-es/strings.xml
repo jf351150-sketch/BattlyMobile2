@@ -733,7 +733,7 @@
     <string name="battly_whats_new_transition_title">Battly 2.2.9 está listo</string>
     <string name="battly_whats_new_transition_desc">Tus instancias siguen en su sitio. Autoriza los plugins externos de confianza en Ajustes antes de usarlos.</string>
 
-    <string name="app_name">Battly Launcher</string>
+    <string name="app_name">Nexus</string>
     <string name="launcher_mobile_badge">Mobile 2.2.9</string>
     <string name="launcher_versions_button">Versiones</string>
     <string name="library_button_desc">Abrir biblioteca</string>
@@ -982,7 +982,7 @@
     <string name="mg_renderer_summary_computeShaderext">Puede ayudar con fallos visuales en shaderpacks. Desactívalo si no lo necesitas; puede causar crashes.</string>
     <string name="mg_renderer_title_multidrawCompute">Usar emulación multidraw por Compute</string>
     <string name="mg_renderer_summary_multidrawCompute">Usa compute shaders para emular multidraw</string>
-    <string name="app_short_name">Battly Launcher</string>
+    <string name="app_short_name">Nexus</string>
     <string name="demo_versions_supported">Las cuentas demo solo soportan Vanilla 1.3.1 y superior</string>
     <string name="demo_unsupported">Perfil demo no soportado</string>
     <string name="change_account">Cambia de cuenta para usar esta función</string>
