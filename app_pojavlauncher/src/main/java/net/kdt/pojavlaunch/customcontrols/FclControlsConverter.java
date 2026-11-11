@@ -186,7 +186,7 @@ public final class FclControlsConverter {
                 StringBuilder result = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    result.append(line).append('\\n');
+                    result.append(line).append('\n');
                     if (result.length() > maxBytes) throw new Exception("Controller file exceeds size limit");
                 }
                 return result.toString();
