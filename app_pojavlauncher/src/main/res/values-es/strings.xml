@@ -1914,4 +1914,7 @@
     <string name="peripheral_mouse_result">%1$s\nAndroid X / Y: %2$s\nJuego X / Y: %3$s\nMuestras: %4$d</string>
     <string name="peripheral_key_result">%1$s\nTecla: %2$s · Código físico: %3$d · Repetición: %4$d\nPulsadas: %5$s</string>
     <string name="nexus_background_free_desc">Fondo personalizado gratis: elige una imagen de tu dispositivo. Las opciones animadas siguen siendo funciones Plus.</string>
+    <string name="fcl_import_confirm">¿Importar %1$s desde el repositorio oficial de controles de FoldCraft? Se convertirán los botones básicos; algunas funciones avanzadas podrían omitirse.</string>
+    <string name="fcl_import_selected">Diseño de FoldCraft importado y seleccionado</string>
+    <string name="fcl_import_done">Diseño de FoldCraft importado</string>
 </resources>
